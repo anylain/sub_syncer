@@ -117,7 +117,7 @@ def sync_sub(path):
         if os.path.isdir(item): continue
         if item.endswith(".mkv"):
             video_info_list.append(init_video_info(item))
-        elif item.endswith(".srt"):
+        elif item.endswith(".srt") or item.endswith(".ass") :
             sub_info_list.append(init_sub_info(item))
     for sub_info in sub_info_list:
         match_point = 0;
@@ -132,9 +132,10 @@ def sync_sub(path):
                 break
         if hit_video:
             print("[{0}%] {1} >>> {2}".format(match_point, sub_info['file_name'], hit_video['name'] + "." + sub_info['ext']))
-            if match_point < 100:
-                rename_list.append({'old': os.path.join(path, sub_info['file_name']),
-                                    'new': os.path.join(path, hit_video['name'] + "." + sub_info['ext'])})
+            old_name = os.path.join(path, sub_info['file_name'])
+            new_name = os.path.join(path, hit_video['name'] + "." + sub_info['ext'])
+            if old_name != new_name:
+                rename_list.append({'old': old_name, 'new': new_name})
             
     if rename_list:
         choice = raw_input("Rename now ?")
@@ -151,7 +152,7 @@ def init_video_info(file_name):
     name = m.group("name")
     ext = m.group("ext")
     words = name.lower().split(".")
-    words.extend(re.findall(r'\d+', name))
+    words.extend(re.findall(r'\w*\d+', name))
     return {"name": name,
             "ext": ext,
             "words": words,
@@ -172,9 +173,7 @@ def init_sub_info(file_name):
             "file_name": file_name}
 
 def is_l10n_info(word):
-    if word in ('chs', 'cht', 'eng'):
-        return True
-    for key in ('简体', '繁体', '英文'):
+    for key in ('简体', '繁体', '英文', 'chs', 'cht', 'eng'):
         if key in word:
             return True
     return False
