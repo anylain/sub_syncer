@@ -114,6 +114,8 @@ def sync_sub(path):
     sub_info_list = []
     rename_list = []
     for item in os.listdir(path):
+        item = item.decode(sys.getfilesystemencoding())
+        print item
         if os.path.isdir(item): continue
         if item.endswith(".mkv"):
             video_info_list.append(init_video_info(item))
@@ -131,9 +133,9 @@ def sync_sub(path):
             if new_match_point >= 100:
                 break
         if hit_video:
-            print("[{0}%] {1} >>> {2}".format(match_point, sub_info['file_name'], hit_video['name'] + "." + sub_info['ext']))
-            old_name = os.path.join(path, sub_info['file_name'])
-            new_name = os.path.join(path, hit_video['name'] + "." + sub_info['ext'])
+            print(u"[{0}%] {1} >>> {2}".format(match_point, sub_info['file_name'], hit_video['name'] + "." + sub_info['ext']))
+            old_name = os.path.join(path, sub_info['file_name'].encode(sys.getfilesystemencoding()))
+            new_name = os.path.join(path, (hit_video['name'] + "." + sub_info['ext']).encode(sys.getfilesystemencoding()))
             if old_name != new_name:
                 rename_list.append({'old': old_name, 'new': new_name})
             
@@ -173,7 +175,7 @@ def init_sub_info(file_name):
             "file_name": file_name}
 
 def is_l10n_info(word):
-    for key in ('简体', '繁体', '英文', 'chs', 'cht', 'eng'):
+    for key in (u'简', u'繁', u'英', 'chs', 'cht', 'eng'):
         if key in word:
             return True
     return False
