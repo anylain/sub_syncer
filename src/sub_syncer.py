@@ -16,7 +16,7 @@ It defines classes_and_methods
 @contact:    user_email
 @deffield    updated: Updated
 """
-
+import logging
 import sys
 import os
 import re
@@ -94,6 +94,7 @@ USAGE
         indent = len(program_name) * " "
         sys.stderr.write(program_name + ": " + repr(e) + "\n")
         sys.stderr.write(indent + "  for help use --help")
+        logging.exception(e)
         return 2
 
 
@@ -159,7 +160,8 @@ def init_sub_info(file_name):
     words = name.lower().split(".")
     if is_l10n_info(words[len(words) - 1]):
         ext = words.pop() + "." + ext
-    words.extend(re.findall(r'\d+', name))
+    words.extend(re.findall(r'S\d+', name))
+    words.extend(re.findall(r'E\d+', name))
     return {"name": name,
             "ext": ext,
             "words": words,
