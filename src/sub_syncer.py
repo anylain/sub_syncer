@@ -57,7 +57,8 @@ def main(argv=None):  # IGNORE:C0111
     program_name = os.path.basename(sys.argv[0])
     program_version = "v%s" % __version__
     program_build_date = str(__updated__)
-    program_version_message = '%%(prog)s %s (%s)' % (program_version, program_build_date)
+    program_version_message = '%%(prog)s %s (%s)' % (
+        program_version, program_build_date)
     program_shortdesc = __import__('__main__').__doc__.split("\n")[1]
     program_license = """%s
 
@@ -75,8 +76,10 @@ USAGE
 
     try:
         # Setup argument parser
-        parser = ArgumentParser(description=program_license, formatter_class=RawDescriptionHelpFormatter)
-        parser.add_argument('-V', '--version', action='version', version=program_version_message)
+        parser = ArgumentParser(
+            description=program_license, formatter_class=RawDescriptionHelpFormatter)
+        parser.add_argument('-V', '--version', action='version',
+                            version=program_version_message)
         parser.add_argument(dest="path", help="paths to folder(s) with source file(s) [default: %(default)s]",
                             metavar="path")
 
@@ -105,13 +108,14 @@ def sync_sub(path):
     for item in os.listdir(path):
         item = item.decode(sys.getfilesystemencoding())
         print item
-        if os.path.isdir(item): continue
+        if os.path.isdir(item):
+            continue
         if item.endswith(".mkv"):
             video_info_list.append(init_video_info(item))
         elif item.endswith(".srt") or item.endswith(".ass"):
             sub_info_list.append(init_sub_info(item))
     for sub_info in sub_info_list:
-        match_point = 0;
+        match_point = 0
         hit_video = None
         for video_info in video_info_list:
             new_match_point = check_match_point(sub_info, video_info)
@@ -125,7 +129,8 @@ def sync_sub(path):
             print(
                 u"[{0}%] {1} >>> {2}".format(match_point, sub_info['file_name'],
                                              hit_video['name'] + "." + sub_info['ext']))
-            old_name = os.path.join(path, sub_info['file_name'].encode(sys.getfilesystemencoding()))
+            old_name = os.path.join(
+                path, sub_info['file_name'].encode(sys.getfilesystemencoding()))
             new_name = os.path.join(path,
                                     (hit_video['name'] + "." + sub_info['ext']).encode(sys.getfilesystemencoding()))
             if old_name != new_name:
